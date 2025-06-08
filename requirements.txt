@@ -11,3 +11,4 @@ python-telegram-bot
 python-dotenv
 python-telegram-bot[webhooks]
 quart
+httpx>=0.24.0
