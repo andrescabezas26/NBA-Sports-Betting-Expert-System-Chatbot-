@@ -323,13 +323,10 @@ if __name__ == '__main__':
     from dotenv import load_dotenv
 
     load_dotenv()
-
-    TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-    WEBHOOK_URL = os.getenv("WEBHOOK_URL")
+    TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # make sure you have this in a .env file
 
     app = ApplicationBuilder().token(TOKEN).build()
 
-    # Conversation handler (lo mantienes igual)
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],
         states={
@@ -344,13 +341,6 @@ if __name__ == '__main__':
     )
 
     app.add_handler(conv_handler)
+    print("✅ Bot running...")
 
-    # Webhook configuration
-    print("🚀 Starting bot with webhook...")
-
-    app.run_webhook(
-        listen="0.0.0.0",
-        port=int(os.environ.get("PORT", 8080)),
-        webhook_url=WEBHOOK_URL,
-        allowed_updates=Update.ALL_TYPES  # Opcional: recibe todos los tipos de update
-    )
+    app.run_polling()
