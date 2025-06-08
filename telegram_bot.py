@@ -324,6 +324,8 @@ if __name__ == '__main__':
 
     load_dotenv()
     TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # make sure you have this in a .env file
+    RENDER_DOMAIN = os.getenv("RENDER_DOMAIN")  # Add this to your .env file
+    PORT = int(os.environ.get("PORT", 8443))
 
     app = ApplicationBuilder().token(TOKEN).build()
 
@@ -341,6 +343,12 @@ if __name__ == '__main__':
     )
 
     app.add_handler(conv_handler)
-    print("✅ Bot running...")
+    print("✅ Bot starting with webhook...")
 
-    app.run_polling()
+    # Webhook configuration for Render deployment
+    app.run_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        url_path=TOKEN,
+        webhook_url=f"https://{RENDER_DOMAIN}/{TOKEN}"
+    )
