@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: tu-nombre-de-servicio
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "python telegram_bot.py"
+    pythonVersion: 3.9.18
