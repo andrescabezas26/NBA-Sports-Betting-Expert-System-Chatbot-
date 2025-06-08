@@ -1,0 +1,11 @@
+requests==2.32.3
+nba-api
+experta
+pgmpy==0.1.25
+pandas
+numpy
+networkx
+scikit-learn
+setuptools<81
+python-telegram-bot
+python-dotenv

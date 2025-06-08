@@ -1,0 +1,143 @@
+{
+  "Lakers": {
+    "LeBron James": "Superstar - 28+ pts, 8+ reb, 8+ ast career avg",
+    "Anthony Davis": "Star - 24+ pts, 10+ reb, dominant defender",
+    "D'Angelo Russell": "Key player - 17+ pts, playmaker",
+    "Austin Reaves": "Key player - 15+ pts, versatile guard"
+  },
+  "Warriors": {
+    "Stephen Curry": "Superstar - 25+ pts, elite shooter",
+    "Klay Thompson": "Star - 20+ pts, elite shooter",
+    "Draymond Green": "Key player - Defensive anchor, playmaker",
+    "Andrew Wiggins": "Key player - Two-way forward"
+  },
+  "Suns": {
+    "Kevin Durant": "Superstar - 27+ pts, elite scorer",
+    "Devin Booker": "Superstar - 27+ pts, clutch scorer",
+    "Bradley Beal": "Star - 23+ pts, offensive talent"
+  },
+  "Celtics": {
+    "Jayson Tatum": "Superstar - 27+ pts, team leader",
+    "Jaylen Brown": "Star - 22+ pts, two-way force",
+    "Kristaps Porzingis": "Key player - Stretch big, rim protector",
+    "Jrue Holiday": "Star - Elite defender, playmaker"
+  },
+  "Bucks": {
+    "Giannis Antetokounmpo": "Superstar - MVP, dominant two-way player",
+    "Damian Lillard": "Superstar - 25+ pts, elite shooter",
+    "Khris Middleton": "Star - 20+ pts, clutch scorer",
+    "Brook Lopez": "Key player - Rim protector, veteran presence"
+  },
+  "76ers": {
+    "Joel Embiid": "Superstar - MVP, dominant big man",
+    "Tyrese Maxey": "Star - 20+ pts, explosive scorer",
+    "Tobias Harris": "Key player - Versatile forward"
+  },
+  "Grizzlies": {
+    "Ja Morant": "Star - 25+ pts, electric playmaker",
+    "Jaren Jackson Jr.": "Star - DPOY, shot blocker",
+    "Desmond Bane": "Key player - 20+ pts, sharpshooter"
+  },
+  "Mavericks": {
+    "Luka Doncic": "Superstar - Triple-double threat, team leader",
+    "Kyrie Irving": "Star - 23+ pts, elite ball handler",
+    "Derrick Jones Jr.": "Key player - Athletic defender"
+  },
+  "Nuggets": {
+    "Nikola Jokic": "Superstar - MVP, playmaking center",
+    "Jamal Murray": "Star - 20+ pts, playoff performer",
+    "Michael Porter Jr.": "Key player - Shooter, stretch forward",
+    "Aaron Gordon": "Key player - Athletic defender, glue guy"
+  },
+  "Heat": {
+    "Jimmy Butler": "Star - Elite two-way player, clutch",
+    "Bam Adebayo": "Star - Defensive anchor, versatile big",
+    "Tyler Herro": "Key player - 20+ pts, perimeter scorer",
+    "Kyle Lowry": "Key player - Veteran leadership"
+  },
+  "Pelicans": {
+    "Zion Williamson": "Star - 25+ pts, dominant inside scorer",
+    "Brandon Ingram": "Star - 22+ pts, smooth scorer",
+    "CJ McCollum": "Key player - 20+ pts, shooter"
+  },
+  "Thunder": {
+    "Shai Gilgeous-Alexander": "Superstar - 30+ pts, MVP candidate",
+    "Chet Holmgren": "Key player - Defensive impact, versatile big",
+    "Josh Giddey": "Key player - Playmaker, tall guard",
+    "Jalen Williams": "Rising star - Two-way wing"
+  },
+  "Bulls": {
+    "Zach LaVine": "Star - 24+ pts, athletic scorer",
+    "DeMar DeRozan": "Star - 21+ pts, mid-range specialist",
+    "Nikola Vucevic": "Key player - Double-double center",
+    "Lonzo Ball": "Key player - Elite defender, playmaker (injured)"
+  },
+  "Hawks": {
+    "Trae Young": "Star - 25+ pts, 10+ ast, offensive engine",
+    "Dejounte Murray": "Star - 20+ pts, two-way guard",
+    "Clint Capela": "Key player - Rebounder, shot blocker"
+  },
+  "Cavaliers": {
+    "Donovan Mitchell": "Superstar - 26+ pts, dynamic scorer",
+    "Darius Garland": "Star - Playmaker, shooter",
+    "Evan Mobley": "Key player - Defensive versatility",
+    "Jarrett Allen": "Key player - Rebounder, rim protector"
+  },
+  "Kings": {
+    "De'Aaron Fox": "Star - 25+ pts, clutch scorer",
+    "Domantas Sabonis": "Star - Triple-double threat, inside presence",
+    "Keegan Murray": "Key player - Young wing shooter"
+  },
+  "Timberwolves": {
+    "Anthony Edwards": "Superstar - 26+ pts, rising face of the league",
+    "Karl-Anthony Towns": "Star - Shooting big man",
+    "Rudy Gobert": "Star - DPOY, elite defender"
+  },
+  "Raptors": {
+    "Scottie Barnes": "Star - All-around rising talent",
+    "Pascal Siakam": "Star - 22+ pts, versatile forward (traded to Pacers)",
+    "RJ Barrett": "Key player - Scoring wing"
+  },
+  "Knicks": {
+    "Jalen Brunson": "Star - 25+ pts, team leader",
+    "Julius Randle": "Star - 20+ pts, physical forward",
+    "Josh Hart": "Key player - Hustle, rebounding guard"
+  },
+  "Rockets": {
+    "Fred VanVleet": "Key player - Veteran leader, shooter",
+    "Alperen Sengun": "Star - Playmaking center",
+    "Jalen Green": "Key player - Explosive scorer"
+  },
+  "Magic": {
+    "Paolo Banchero": "Star - 22+ pts, all-around forward",
+    "Franz Wagner": "Key player - Versatile wing"
+  },
+  "Nets": {
+    "Mikal Bridges": "Star - Two-way wing",
+    "Cam Thomas": "Key player - Scorer off the bench"
+  },
+  "Spurs": {
+    "Victor Wembanyama": "Superstar - Generational talent, shot blocker, scorer",
+    "Devin Vassell": "Key player - Shooter, defender"
+  },
+  "Pacers": {
+    "Tyrese Haliburton": "Star - 20+ pts, 10+ ast, elite playmaker",
+    "Pascal Siakam": "Star - 22+ pts, slashing forward"
+  },
+  "Trail Blazers": {
+    "Anfernee Simons": "Key player - Shooter, playmaker",
+    "Scoot Henderson": "Rising star - Young point guard"
+  },
+  "Hornets": {
+    "LaMelo Ball": "Star - Playmaker, triple-double potential",
+    "Miles Bridges": "Key player - Athletic forward"
+  },
+  "Wizards": {
+    "Jordan Poole": "Key player - Streaky scorer",
+    "Kyle Kuzma": "Key player - 20+ pts, shot creator"
+  },
+  "Pistons": {
+    "Cade Cunningham": "Key player - Team leader, big guard",
+    "Jaden Ivey": "Rising star - Athletic combo guard"
+  }
+}

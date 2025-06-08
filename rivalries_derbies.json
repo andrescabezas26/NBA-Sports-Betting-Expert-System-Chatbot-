@@ -1,0 +1,98 @@
+[
+  {
+    "type": "rivalry",
+    "rivalry": "Boston Celtics vs. Los Angeles Lakers",
+    "teams": ["Boston Celtics", "Los Angeles Lakers"],
+    "era": "1950s - Present",
+    "description": "The most iconic NBA rivalry, with 12 Finals matchups. Classic battles like Russell vs. Chamberlain, Bird vs. Magic, and Kobe vs. Pierce."
+  },
+  {
+    "type": "rivalry",
+    "rivalry": "Chicago Bulls vs. Detroit Pistons",
+    "teams": ["Chicago Bulls", "Detroit Pistons"],
+    "era": "Late 1980s - Early 1990s",
+    "description": "The Bad Boys Pistons physically challenged Michael Jordan's Bulls until MJ finally broke through in 1991."
+  },
+  {
+    "type": "rivalry",
+    "rivalry": "Miami Heat vs. New York Knicks",
+    "teams": ["Miami Heat", "New York Knicks"],
+    "era": "1997 - 2000",
+    "description": "One of the most physical and intense rivalries, featuring four consecutive playoff series with fights and drama."
+  },
+  {
+    "type": "rivalry",
+    "rivalry": "Golden State Warriors vs. Cleveland Cavaliers",
+    "teams": ["Golden State Warriors", "Cleveland Cavaliers"],
+    "era": "2015 - 2018",
+    "description": "Four consecutive Finals between LeBron's Cavs and the Warriors' dynasty. A rivalry that defined a generation."
+  },
+  {
+    "type": "rivalry",
+    "rivalry": "San Antonio Spurs vs. Los Angeles Lakers",
+    "teams": ["San Antonio Spurs", "Los Angeles Lakers"],
+    "era": "2000s",
+    "description": "Clash between two Western Conference powerhouses. Tim Duncan vs. Shaq and Kobe, then Parker and Ginóbili."
+  },
+  {
+    "type": "rivalry",
+    "rivalry": "Philadelphia 76ers vs. Boston Celtics",
+    "teams": ["Philadelphia 76ers", "Boston Celtics"],
+    "era": "1950s - Present",
+    "description": "One of the oldest NBA rivalries. Wilt vs. Russell, then Dr. J vs. Bird, and now Embiid vs. Tatum."
+  },
+  {
+    "type": "rivalry",
+    "rivalry": "Indiana Pacers vs. New York Knicks",
+    "teams": ["Indiana Pacers", "New York Knicks"],
+    "era": "1990s",
+    "description": "A fierce 90s rivalry. Reggie Miller's heroics at Madison Square Garden are unforgettable moments in NBA history."
+  },
+  {
+    "type": "rivalry",
+    "rivalry": "Los Angeles Lakers vs. Sacramento Kings",
+    "teams": ["Los Angeles Lakers", "Sacramento Kings"],
+    "era": "2000 - 2002",
+    "description": "A short but intense rivalry highlighted by the controversial 2002 Western Conference Finals."
+  },
+  {
+    "type": "derby",
+    "rivalry": "Battle of L.A.",
+    "teams": ["Los Angeles Lakers", "Los Angeles Clippers"],
+    "era": "2010s - Present",
+    "description": "City rivalry for Los Angeles dominance. Historically dominated by the Lakers, but the Clippers have risen recently."
+  },
+  {
+    "type": "derby",
+    "rivalry": "Battle of Texas",
+    "teams": ["San Antonio Spurs", "Dallas Mavericks", "Houston Rockets"],
+    "era": "2000s",
+    "description": "Texas state pride at stake with multiple playoff battles between these franchises."
+  },
+  {
+    "type": "derby",
+    "rivalry": "Battle of the Boroughs",
+    "teams": ["New York Knicks", "Brooklyn Nets"],
+    "era": "2012 - Present",
+    "description": "New York's intra-city rivalry since the Nets moved to Brooklyn. A battle for Big Apple bragging rights."
+  },
+  {
+    "type": "derby",
+    "rivalry": "California Classic",
+    "teams": [
+      "Golden State Warriors",
+      "Sacramento Kings",
+      "Los Angeles Lakers",
+      "Los Angeles Clippers"
+    ],
+    "era": "Various",
+    "description": "California’s NBA teams often clash. Recently, Kings vs. Warriors has become more competitive."
+  },
+  {
+    "type": "derby",
+    "rivalry": "I-95 Rivalry",
+    "teams": ["Philadelphia 76ers", "New York Knicks", "Boston Celtics"],
+    "era": "Ongoing",
+    "description": "Northeastern U.S. teams connected by Interstate 95. Lots of intense matchups and playoff history."
+  }
+]
