@@ -6,6 +6,7 @@ Main application that integrates all components
 
 import sys
 import traceback
+import asyncio
 from typing import List, Dict, Any, Optional, Tuple
 from datetime import datetime
 
@@ -204,11 +205,11 @@ class NBAChatbot:
                 else:
                     print("❌ Invalid choice. Please enter 1 or 2.")
 
-    def validate_and_get_team_stats(self, team_name: str) -> Optional[TeamStats]:
-        """Validate team name and get stats"""
+    async def validate_and_get_team_stats_async(self, team_name: str) -> Optional[TeamStats]:
+        """Async version of validate_and_get_team_stats"""
         print(f"\n🔍 Fetching data for {team_name}...")
 
-        team_stats = self.data_fetcher.get_team_stats(team_name)
+        team_stats = await self.data_fetcher.get_team_stats_async(team_name)
         
         if not team_stats:
             print(f"❌ Could not find team '{team_name}' or fetch its data.")
@@ -219,6 +220,77 @@ class NBAChatbot:
         
         print(f"✅ Found: {team_stats.team_name}")
         return team_stats
+
+    async def perform_analysis_async(
+        self, team_stats: TeamStats, opponent_name: str, venue: str
+    ) -> BettingAnalysis:
+        """Async version of perform_analysis that can be run as a background task"""
+        print(f"\n🧠 Analyzing betting recommendation for {team_stats.team_name}...")
+
+        # NEW: Get opponent stats for comparative analysis
+        print(f"🔍 Fetching opponent data for {opponent_name}...")
+        
+        # Run opponent stats fetching in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        opponent_stats = await loop.run_in_executor(
+            None, self.validate_and_get_team_stats, opponent_name
+        )
+        
+        if opponent_stats:
+            print(f"✅ Opponent data loaded: {opponent_stats.team_name}")
+        else:
+            print(f"⚠️ Could not load opponent data for {opponent_name}")
+
+        # Run expert system analysis in executor
+        expert_result = await loop.run_in_executor(
+            None, self.expert_engine.analyze_bet, team_stats, venue, opponent_stats
+        )
+
+        # Run Bayesian analysis in executor
+        bayesian_result = await loop.run_in_executor(
+            None, self.bayesian_analyzer.analyze_betting_risk, team_stats, venue
+        )
+
+        # Combine results (this is fast, so no need for async)
+        expert_rec = expert_result["recommendation"]
+        bayesian_rec = bayesian_result["recommendation"]
+
+        if expert_rec == bayesian_rec:
+            final_recommendation = expert_rec
+            confidence = (bayesian_result["confidence"] + 0.8) / 2
+        else:
+            final_recommendation = (
+                "risky" if "risky" in [expert_rec, bayesian_rec] else "safe"
+            )
+            confidence = 0.6
+
+        # Determine risk level
+        expert_risk = expert_result["risk_level"]
+        bayesian_risk = bayesian_result["risk_level"]
+
+        risk_mapping = {"low": 1, "medium": 2, "high": 3}
+        avg_risk_level = (risk_mapping[expert_risk] + risk_mapping[bayesian_risk]) / 2
+
+        if avg_risk_level <= 1.5:
+            final_risk_level = "low"
+        elif avg_risk_level <= 2.5:
+            final_risk_level = "medium"
+        else:
+            final_risk_level = "high"
+
+        # Combine reasoning
+        all_reasoning = expert_result["reasoning"] + [
+            f"Bayesian analysis: {bayesian_risk} risk ({bayesian_result['confidence']:.1%} confidence)"
+        ]
+
+        return BettingAnalysis(
+            recommendation=final_recommendation,
+            confidence=confidence,
+            risk_level=final_risk_level,
+            reasoning=all_reasoning,
+            triggered_rules=expert_result["triggered_rules"],
+            bayesian_probability=bayesian_result["bayesian_probability"],
+        )
 
     def perform_analysis(
         self, team_stats: TeamStats, opponent_name: str, venue: str
