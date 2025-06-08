@@ -286,140 +286,165 @@ class NBADataFetcher:
         return None
 
     def get_team_stats(self, team_name: str) -> Optional[TeamStats]:
-        """Get comprehensive team statistics"""
+        """Get comprehensive team statistics with timeout handling"""
         team_id = self.get_team_id(team_name)
         if not team_id:
             print(f"Team '{team_name}' not found")
             return None
 
-        try:
-            print(f"Fetching stats for {team_name}...")
-
-            # Get recent game log (last 10 games)
-            game_log = teamgamelog.TeamGameLog(
-                team_id=team_id, season="2024-25", season_type_all_star="Regular Season"
-            )
-
-            # Add delay to respect API limits
-            time.sleep(0.6)
-
-            games_df = game_log.get_data_frames()[0]
-
-            if games_df.empty:
-                print(f"No game data found for {team_name}")
-                return None
-
-            # Debug: Print available columns
-            print(f"Available columns: {list(games_df.columns)}")
-
-            # Calculate statistics
-            total_games = len(games_df)
-            wins = len(games_df[games_df["WL"] == "W"])
-            losses = total_games - wins
-            win_pct = wins / total_games if total_games > 0 else 0
-
-            avg_points = games_df["PTS"].mean()
-
-            # NBA API doesn't provide opponent points directly in team game log
-            # We need to calculate it differently or use league averages
-            # For now, let's use a reasonable NBA average
-            avg_opp_points = 115.0  # Current NBA average points per game
-
-            print(f"Team averages {avg_points:.1f} points per game")
-
-            # Get last 10 games record
-            last_10 = games_df.head(10)
-            last_10_wins = len(last_10[last_10["WL"] == "W"])
-            last_10_record = f"{last_10_wins}-{10 - last_10_wins}"
-
-            # Calculate consecutive wins/losses
-            consecutive_wins = 0
-            consecutive_losses = 0
-            current_streak = ""
-
-            if not games_df.empty:
-                # Get the most recent result
-                recent_result = games_df.iloc[0]["WL"]
-                streak_count = 1
-
-                # Count consecutive results
-                for i in range(1, min(len(games_df), 10)):
-                    if games_df.iloc[i]["WL"] == recent_result:
-                        streak_count += 1
-                    else:
-                        break
-
-                if recent_result == "W":
-                    consecutive_wins = streak_count
-                    current_streak = f"W{streak_count}"
-                else:
-                    consecutive_losses = streak_count
-                    current_streak = f"L{streak_count}"
-
-            # Get unavailable players using NBA API
+        # Retry configuration
+        max_retries = 3
+        base_delay = 1.0
+        
+        for attempt in range(max_retries):
             try:
-                unavailable_players = self.get_unavailable_players(team_id)
-                print(
-                    f"Found {len(unavailable_players)} unavailable players via NBA API"
+                print(f"Fetching stats for {team_name}... (attempt {attempt + 1}/{max_retries})")
+
+                # Get recent game log with timeout handling
+                try:
+                    game_log = teamgamelog.TeamGameLog(
+                        team_id=team_id, 
+                        season="2024-25", 
+                        season_type_all_star="Regular Season",
+                        timeout=60  # Increase timeout to 60 seconds
+                    )
+
+                    # Progressive delay between API calls
+                    delay = base_delay * (attempt + 1)
+                    time.sleep(delay)
+
+                    games_df = game_log.get_data_frames()[0]
+
+                except Exception as api_error:
+                    if attempt < max_retries - 1:
+                        print(f"⏰ API timeout on attempt {attempt + 1}, retrying in {base_delay * (attempt + 2)} seconds...")
+                        time.sleep(base_delay * (attempt + 2))
+                        continue
+                    else:
+                        print(f"❌ Final API timeout for {team_name}: {api_error}")
+                        # Fall back to cached or mock data
+                        return self._get_fallback_team_stats(team_name)
+
+                if games_df.empty:
+                    print(f"No game data found for {team_name}")
+                    if attempt < max_retries - 1:
+                        time.sleep(base_delay * (attempt + 1))
+                        continue
+                    return None
+
+                # Debug: Print available columns
+                print(f"Available columns: {list(games_df.columns)}")
+
+                # Calculate statistics
+                total_games = len(games_df)
+                wins = len(games_df[games_df["WL"] == "W"])
+                losses = total_games - wins
+                win_pct = wins / total_games if total_games > 0 else 0
+
+                avg_points = games_df["PTS"].mean()
+
+                # NBA API doesn't provide opponent points directly in team game log
+                # We need to calculate it differently or use league averages
+                # For now, let's use a reasonable NBA average
+                avg_opp_points = 115.0  # Current NBA average points per game
+
+                print(f"Team averages {avg_points:.1f} points per game")
+
+                # Get last 10 games record
+                last_10 = games_df.head(10)
+                last_10_wins = len(last_10[last_10["WL"] == "W"])
+                last_10_record = f"{last_10_wins}-{10 - last_10_wins}"
+
+                # Calculate consecutive wins/losses
+                consecutive_wins = 0
+                consecutive_losses = 0
+                current_streak = ""
+
+                if not games_df.empty:
+                    # Get the most recent result
+                    recent_result = games_df.iloc[0]["WL"]
+                    streak_count = 1
+
+                    # Count consecutive results
+                    for i in range(1, min(len(games_df), 10)):
+                        if games_df.iloc[i]["WL"] == recent_result:
+                            streak_count += 1
+                        else:
+                            break
+
+                    if recent_result == "W":
+                        consecutive_wins = streak_count
+                        current_streak = f"W{streak_count}"
+                    else:
+                        consecutive_losses = streak_count
+                        current_streak = f"L{streak_count}"
+
+                # Get unavailable players using NBA API with timeout handling
+                try:
+                    unavailable_players = self.get_unavailable_players_with_timeout(team_id)
+                    print(f"Found {len(unavailable_players)} unavailable players via NBA API")
+
+                    # Count key players that are unavailable (marked with ⭐)
+                    key_players_out = [p for p in unavailable_players if "⭐ Key Player" in p]
+                    key_players_unavailable = len(key_players_out) > 0
+                    key_players_unavailable_count = len(key_players_out)
+
+                    if key_players_out:
+                        print(f"⚠️  {len(key_players_out)} KEY PLAYERS unavailable:")
+                        for player in key_players_out:
+                            print(f"   - {player}")
+
+                except Exception as e:
+                    print(f"Failed to get unavailable players from NBA API: {e}")
+                    # Fallback to mock data
+                    unavailable_players = self._get_mock_unavailable_players(team_name)
+                    key_players_out = [p for p in unavailable_players if "⭐ Key Player" in p]
+                    key_players_unavailable = len(key_players_out) > 0
+                    key_players_unavailable_count = len(key_players_out)
+                    print(f"Using mock data: {len(unavailable_players)} unavailable players")
+
+                # Calculate home/away records (simplified)
+                home_games = games_df[games_df["MATCHUP"].str.contains("vs.")]
+                away_games = games_df[games_df["MATCHUP"].str.contains("@")]
+
+                home_wins = len(home_games[home_games["WL"] == "W"])
+                home_losses = len(home_games) - home_wins
+                away_wins = len(away_games[away_games["WL"] == "W"])
+                away_losses = len(away_games) - away_wins
+
+                team_stats = TeamStats(
+                    team_name=team_name,
+                    wins=wins,
+                    losses=losses,
+                    win_percentage=win_pct,
+                    points_per_game=avg_points,
+                    opponent_points_per_game=avg_opp_points,
+                    home_record=f"{home_wins}-{home_losses}",
+                    away_record=f"{away_wins}-{away_losses}",
+                    last_10_games=last_10_record,
+                    streak=current_streak,
+                    unavailable_players=unavailable_players,
+                    key_players_unavailable=key_players_unavailable,
+                    key_players_unavailable_count=key_players_unavailable_count,
+                    consecutive_losses=consecutive_losses,
+                    consecutive_wins=consecutive_wins,
                 )
 
-                # Count key players that are unavailable (marked with ⭐)
-                key_players_out = [
-                    p for p in unavailable_players if "⭐ Key Player" in p
-                ]
-                key_players_unavailable = len(key_players_out) > 0
-                key_players_unavailable_count = len(key_players_out)
-
-                if key_players_out:
-                    print(f"⚠️  {len(key_players_out)} KEY PLAYERS unavailable:")
-                    for player in key_players_out:
-                        print(f"   - {player}")
+                print(f"✅ Successfully fetched stats for {team_name}")
+                return team_stats
 
             except Exception as e:
-                print(f"Failed to get unavailable players from NBA API: {e}")
-                # Fallback to mock data
-                unavailable_players = self._get_mock_unavailable_players(team_name)
-                key_players_out = [
-                    p for p in unavailable_players if "⭐ Key Player" in p
-                ]
-                key_players_unavailable = len(key_players_out) > 0
-                key_players_unavailable_count = len(key_players_out)
-                print(
-                    f"Using mock data: {len(unavailable_players)} unavailable players"
-                )
+                if attempt < max_retries - 1:
+                    print(f"❌ Error on attempt {attempt + 1}: {e}")
+                    print(f"🔄 Retrying in {base_delay * (attempt + 2)} seconds...")
+                    time.sleep(base_delay * (attempt + 2))
+                    continue
+                else:
+                    print(f"❌ Final error fetching team stats for {team_name}: {e}")
+                    # Return fallback data
+                    return self._get_fallback_team_stats(team_name)
 
-            # Calculate home/away records (simplified)
-            home_games = games_df[games_df["MATCHUP"].str.contains("vs.")]
-            away_games = games_df[games_df["MATCHUP"].str.contains("@")]
-
-            home_wins = len(home_games[home_games["WL"] == "W"])
-            home_losses = len(home_games) - home_wins
-            away_wins = len(away_games[away_games["WL"] == "W"])
-            away_losses = len(away_games) - away_wins
-
-            team_stats = TeamStats(
-                team_name=team_name,
-                wins=wins,
-                losses=losses,
-                win_percentage=win_pct,
-                points_per_game=avg_points,
-                opponent_points_per_game=avg_opp_points,
-                home_record=f"{home_wins}-{home_losses}",
-                away_record=f"{away_wins}-{away_losses}",
-                last_10_games=last_10_record,
-                streak=current_streak,
-                unavailable_players=unavailable_players,
-                key_players_unavailable=key_players_unavailable,
-                key_players_unavailable_count=key_players_unavailable_count,
-                consecutive_losses=consecutive_losses,
-                consecutive_wins=consecutive_wins,
-            )
-
-            return team_stats
-
-        except Exception as e:
-            print(f"Error fetching team stats for {team_name}: {e}")
-            return None
+        return None
 
     def get_unavailable_players(self, team_id: int) -> List[str]:
         """
