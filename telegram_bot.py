@@ -1,11 +1,18 @@
-# telegram_bot.py
-
+import os
+import logging
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder, CommandHandler, MessageHandler, filters,
     ContextTypes, ConversationHandler
 )
 from nba_chatbot import NBAChatbot
+
+# Configure logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
 
 # Conversation states
 CHOOSING_TEAMS, ENTER_TEAM_NAMES, ENTER_TEAM2, CHOOSE_VENUE, CHOOSE_BETTING_TEAM, CONTINUE_OR_END = range(6)
@@ -317,18 +324,20 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Session cancelled. Use /start to begin again.")
     return ConversationHandler.END
 
-# Main app
-if __name__ == '__main__':
-    import os
-    from dotenv import load_dotenv
+# Error handler
+async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Log the error and send a telegram message to notify the developer."""
+    logger.error(msg="Exception while handling an update:", exc_info=context.error)
 
-    load_dotenv()
-    TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # make sure you have this in a .env file
-    RENDER_DOMAIN = os.getenv("RENDER_DOMAIN")  # Add this to your .env file
-    PORT = int(os.environ.get("PORT", 8443))
-
-    app = ApplicationBuilder().token(TOKEN).build()
-
+def create_application():
+    """Create and configure the application"""
+    TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+    if not TOKEN:
+        raise ValueError("TELEGRAM_BOT_TOKEN environment variable is required")
+    
+    application = ApplicationBuilder().token(TOKEN).build()
+    
+    # Conversation handler
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],
         states={
@@ -341,14 +350,37 @@ if __name__ == '__main__':
         },
         fallbacks=[CommandHandler('cancel', cancel)]
     )
+    
+    application.add_handler(conv_handler)
+    application.add_error_handler(error_handler)
+    
+    return application
 
-    app.add_handler(conv_handler)
-    print("✅ Bot starting with webhook...")
+# For production deployment (Render, Heroku, etc.)
+def main():
+    """Main function for production deployment"""
+    from dotenv import load_dotenv
+    
+    load_dotenv()
+    
+    application = create_application()
+    WEBHOOK_URL = os.getenv("WEBHOOK_URL")
+    PORT = int(os.getenv("PORT", 8080))
+    
+    if WEBHOOK_URL:
+        logger.info(f"Starting webhook on port {PORT}")
+        logger.info(f"Webhook URL: {WEBHOOK_URL}")
+        
+        # Configure webhook
+        application.run_webhook(
+            listen="0.0.0.0",
+            port=PORT,
+            webhook_url=WEBHOOK_URL,
+            drop_pending_updates=True
+        )
+    else:
+        logger.info("No WEBHOOK_URL found, starting with polling")
+        application.run_polling(drop_pending_updates=True)
 
-    # Webhook configuration for Render deployment
-    app.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        url_path=TOKEN,
-        webhook_url=f"https://{RENDER_DOMAIN}/{TOKEN}"
-    )
+if __name__ == '__main__':
+    main()

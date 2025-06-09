@@ -3,15 +3,17 @@ NBA Data Fetcher
 Handles data retrieval from TheSportsDB and nba_api with caching
 """
 
+import asyncio
 import requests
 import json
 import os
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Tuple
+import time
+import httpx  # Better async HTTP client
 from nba_api.stats.endpoints import teamgamelog, leaguegamefinder, playercareerstats
 from nba_api.stats.static import teams, players
 from models import GameInfo, TeamStats
-import time
 
 
 class NBADataFetcher:
@@ -412,14 +414,48 @@ class NBADataFetcher:
                 key_players_unavailable=key_players_unavailable,
                 key_players_unavailable_count=key_players_unavailable_count,
                 consecutive_losses=consecutive_losses,
-                consecutive_wins=consecutive_wins,
-            )
+                consecutive_wins=consecutive_wins,            )
 
             return team_stats
 
         except Exception as e:
             print(f"Error fetching team stats for {team_name}: {e}")
             return None
+
+    async def get_team_stats_async(self, team_name: str) -> Optional[TeamStats]:
+        """Async version of get_team_stats with timeout and retry logic"""
+        max_retries = 3
+        timeout_seconds = 45  # Reasonable timeout for each attempt
+        
+        for attempt in range(max_retries):
+            try:
+                print(f"🔄 Attempt {attempt + 1}/{max_retries}: Fetching stats for {team_name}...")
+                
+                # Run the synchronous version in a thread pool with timeout
+                loop = asyncio.get_event_loop()
+                task = loop.run_in_executor(None, self.get_team_stats, team_name)
+                
+                # Wait with timeout
+                result = await asyncio.wait_for(task, timeout=timeout_seconds)
+                
+                if result:
+                    print(f"✅ Successfully retrieved stats for {team_name}")
+                    return result
+                else:
+                    print(f"⚠️ No data returned for {team_name} on attempt {attempt + 1}")
+                    
+            except asyncio.TimeoutError:
+                print(f"⏰ Timeout ({timeout_seconds}s) on attempt {attempt + 1} for {team_name}")
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(2)  # Wait before retry
+                    
+            except Exception as e:
+                print(f"❌ Error on attempt {attempt + 1} for {team_name}: {e}")
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(2)  # Wait before retry
+        
+        print(f"❌ Failed to get stats for {team_name} after {max_retries} attempts")
+        return None
 
     def get_unavailable_players(self, team_id: int) -> List[str]:
         """
