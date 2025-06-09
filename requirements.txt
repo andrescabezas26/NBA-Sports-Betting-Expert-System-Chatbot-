@@ -9,3 +9,5 @@ scikit-learn
 setuptools<81
 python-telegram-bot
 python-dotenv
+flask==3.0.0
+flask-cors==4.0.0

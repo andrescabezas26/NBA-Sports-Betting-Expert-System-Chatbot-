@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Sports Betting Expert - AI Chatbot</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .chat-container {
+            display: flex;
+            height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar {
+            width: 320px;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #f39c12, #e74c3c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+
+        .features {
+            padding: 20px;
+            flex: 1;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #e74c3c, #f39c12);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .feature-desc {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            line-height: 1.4;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .chat-header {
+            padding: 20px 30px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin: 0 15px;
+        }
+
+        .message.bot .message-avatar {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(45deg, #e74c3c, #f39c12);
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: #f8fafc;
+            border-radius: 20px;
+            max-width: 80px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #64748b;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .chat-input-container {
+            padding: 20px 30px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input-wrapper:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .chat-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 15px 20px;
+            font-size: 1rem;
+            background: transparent;
+            border-radius: 20px;
+        }
+
+        .send-button {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .welcome-icon {
+            font-size: 4rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+
+        .welcome-subtitle {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .chat-main {
+                height: calc(100vh - 200px);
+            }
+        }
+
+        .analysis-result {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #0369a1;
+        }
+
+        .recommendation-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .recommendation-safe {
+            background: #dcfce7;
+            color: #166534;
+        }        .recommendation-risky {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .recommendation-high-risk {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: #f8fafc;
+            border-radius: 20px;
+            max-width: 80px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #64748b;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .message-timestamp {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        .connection-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-connected {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-connecting {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .recommendation-high-risk {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .message-timestamp {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        .connection-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-connected {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-connecting {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🏀 NBA Expert</div>
+                <div class="subtitle">AI Sports Betting Advisor</div>
+            </div>
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="feature-text">
+                        <div class="feature-title">Real-time Analysis</div>
+                        <div class="feature-desc">Get live team statistics and performance metrics</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="feature-text">
+                        <div class="feature-title">AI Expert System</div>
+                        <div class="feature-desc">Advanced rule-based betting recommendations</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="feature-text">
+                        <div class="feature-title">Bayesian Network</div>
+                        <div class="feature-desc">Probabilistic analysis for informed decisions</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-text">
+                        <div class="feature-title">Risk Assessment</div>
+                        <div class="feature-desc">Comprehensive risk evaluation for each bet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <div class="chat-header">
+                <div class="chat-title">NBA Betting Expert Assistant</div>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Online</span>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-message">
+                    <div class="welcome-icon">
+                        <i class="fas fa-basketball-ball"></i>
+                    </div>
+                    <div class="welcome-title">Welcome to NBA Betting Expert!</div>
+                    <div class="welcome-subtitle">
+                        I'm your AI assistant for NBA sports betting analysis. I can analyze team statistics, 
+                        provide betting recommendations, and assess risk levels. Try asking me about any NBA teams!
+                    </div>
+                </div>
+            </div>            <div class="chat-input-container">
+                <div class="quick-actions">
+                    <button class="quick-action" onclick="sendQuickMessage('1')">
+                        <i class="fas fa-calendar"></i> Upcoming Games
+                    </button>
+                    <button class="quick-action" onclick="sendQuickMessage('2')">
+                        <i class="fas fa-edit"></i> Manual Entry
+                    </button>
+                    <button class="quick-action" onclick="sendQuickMessage('Help')">
+                        <i class="fas fa-question-circle"></i> Help
+                    </button>
+                </div>
+                <div class="chat-input-wrapper">
+                    <input type="text" class="chat-input" id="messageInput" 
+                           placeholder="Ask me about NBA teams, betting analysis, or upcoming games..." 
+                           onkeypress="handleKeyPress(event)">
+                    <button class="send-button" id="sendButton" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>    <script>
+        class NBAChatbot {
+            constructor() {
+                this.messagesContainer = document.getElementById('chatMessages');
+                this.messageInput = document.getElementById('messageInput');
+                this.sendButton = document.getElementById('sendButton');
+                this.isProcessing = false;
+                this.sessionState = {};
+                this.initializeConversation();
+            }
+
+            async initializeConversation() {
+                // Clear welcome message and start conversation
+                setTimeout(async () => {
+                    this.messagesContainer.innerHTML = '';
+                    this.showTyping();
+                    
+                    try {
+                        // Initialize conversation with the backend
+                        const response = await this.callNBAAPI('start', {});
+                        this.hideTyping();
+                        
+                        if (response.session_state) {
+                            this.sessionState = response.session_state;
+                        }
+                        
+                        if (response.type === 'analysis_complete') {
+                            this.addAnalysisMessage(response);
+                        } else {
+                            this.addMessage('bot', response.message);
+                        }
+                    } catch (error) {
+                        this.hideTyping();
+                        this.addMessage('bot', 'Welcome to NBA Betting Expert! Please tell me which teams you\'d like to analyze.');
+                    }
+                }, 1000);
+            }
+
+            addMessage(sender, content, isAnalysis = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+                
+                const avatar = document.createElement('div');
+                avatar.className = 'message-avatar';
+                avatar.textContent = sender === 'bot' ? '🤖' : '👤';
+                
+                const messageContent = document.createElement('div');
+                messageContent.className = 'message-content';
+                
+                if (isAnalysis) {
+                    messageContent.innerHTML = content;
+                } else {
+                    messageContent.textContent = content;
+                }
+                
+                const timestamp = document.createElement('div');
+                timestamp.className = 'message-time';
+                timestamp.textContent = new Date().toLocaleTimeString();
+                
+                messageContent.appendChild(timestamp);
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(messageContent);
+                
+                this.messagesContainer.appendChild(messageDiv);
+                this.scrollToBottom();
+            }            addAnalysisMessage(response) {
+                // Handle complete analysis response
+                const data = response.data || response;
+                
+                let analysisHTML = '';
+                
+                if (response.type === 'analysis_complete' && data.analysis_result) {
+                    // Full analysis result with comprehensive details
+                    const result = data.analysis_result;
+                    
+                    analysisHTML = `
+                        <div class="analysis-result">
+                            <div class="analysis-header">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Complete Analysis: ${result.team_name} vs ${result.opponent}</span>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <span class="recommendation-badge ${this.getRecommendationClass(result.recommendation)}">
+                                    ${result.recommendation.toUpperCase()} BET
+                                </span>
+                                <span style="margin-left: 10px; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: #f1f5f9; color: #475569;">
+                                    Risk: ${result.risk_level}
+                                </span>
+                            </div>
+                            
+                            <!-- Team Overview Section -->
+                            <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 10px; border-left: 4px solid #667eea;">
+                                <h4 style="margin: 0 0 10px 0; color: #334155; display: flex; align-items: center;">
+                                    <i class="fas fa-basketball-ball" style="margin-right: 8px; color: #667eea;"></i>
+                                    Team Overview
+                                </h4>
+                                <div class="stats-grid">
+                                    <div class="stat-item">
+                                        <div class="stat-value">${result.team_record}</div>
+                                        <div class="stat-label">Record</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">${result.win_percentage || 'N/A'}</div>
+                                        <div class="stat-label">Win %</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">${result.ppg}</div>
+                                        <div class="stat-label">PPG</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">${result.opp_ppg || 'N/A'}</div>
+                                        <div class="stat-label">Opp PPG</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">${result.home_record || 'N/A'}</div>
+                                        <div class="stat-label">Home Record</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">${result.away_record || 'N/A'}</div>
+                                        <div class="stat-label">Away Record</div>
+                                    </div>
+                                </div>
+                                
+                                ${result.streak && result.streak !== 'N/A' ? `
+                                    <div style="margin-top: 10px; padding: 8px 12px; background: #e0f2fe; border-radius: 6px; display: inline-block;">
+                                        <strong style="color: #0369a1;">Current Streak:</strong> <span style="color: #075985;">${result.streak}</span>
+                                    </div>
+                                ` : ''}
+                                
+                                ${result.injuries && result.injuries.length > 0 ? `
+                                    <div style="margin-top: 10px; padding: 8px 12px; background: #fef3c7; border-radius: 6px;">
+                                        <strong style="color: #92400e;">Injuries:</strong> <span style="color: #a16207;">${result.injuries.join(', ')}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <!-- Expert System Analysis -->
+                            ${result.expert_rules && result.expert_rules.length > 0 ? `
+                                <div style="margin-bottom: 20px; padding: 15px; background: #f0fdf4; border-radius: 10px; border-left: 4px solid #22c55e;">
+                                    <h4 style="margin: 0 0 10px 0; color: #334155; display: flex; align-items: center;">
+                                        <i class="fas fa-brain" style="margin-right: 8px; color: #22c55e;"></i>
+                                        Expert System Analysis
+                                    </h4>
+                                    <div style="font-size: 0.9rem; line-height: 1.6;">
+                                        <strong style="color: #166534;">Triggered Rules:</strong>
+                                        <ul style="margin: 8px 0 0 20px; color: #15803d;">
+                                            ${result.expert_rules.map(rule => `<li>${rule}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                    ${result.expert_reasoning && result.expert_reasoning.length > 0 ? `
+                                        <div style="margin-top: 10px;">
+                                            <strong style="color: #166534;">Reasoning:</strong>
+                                            <ul style="margin: 8px 0 0 20px; color: #15803d;">
+                                                ${result.expert_reasoning.map(reason => `<li>${reason}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Bayesian Network Analysis -->
+                            <div style="margin-bottom: 20px; padding: 15px; background: #fef7ff; border-radius: 10px; border-left: 4px solid #a855f7;">
+                                <h4 style="margin: 0 0 10px 0; color: #334155; display: flex; align-items: center;">
+                                    <i class="fas fa-calculator" style="margin-right: 8px; color: #a855f7;"></i>
+                                    Bayesian Network Analysis
+                                </h4>
+                                <div class="stats-grid" style="margin-bottom: 10px;">
+                                    <div class="stat-item">
+                                        <div class="stat-value">${result.confidence}</div>
+                                        <div class="stat-label">Overall Confidence</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">${result.bayesian_confidence || 'N/A'}</div>
+                                        <div class="stat-label">Bayesian Confidence</div>
+                                    </div>
+                                </div>
+                                ${result.bayesian_explanation ? `
+                                    <div style="font-size: 0.9rem; color: #7c3aed; line-height: 1.6;">
+                                        <strong>Probabilistic Assessment:</strong><br>
+                                        ${result.bayesian_explanation}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <!-- Key Reasoning Factors -->
+                            ${result.reasoning && result.reasoning.length > 0 ? `
+                                <div style="margin-bottom: 20px; padding: 15px; background: #f1f5f9; border-radius: 10px; border-left: 4px solid #64748b;">
+                                    <h4 style="margin: 0 0 10px 0; color: #334155; display: flex; align-items: center;">
+                                        <i class="fas fa-list-ul" style="margin-right: 8px; color: #64748b;"></i>
+                                        Key Analysis Factors
+                                    </h4>
+                                    <ul style="margin: 0; padding-left: 20px; line-height: 1.6; color: #475569;">
+                                        ${result.reasoning.map(reason => `<li>${reason}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Final Summary -->
+                            ${result.summary ? `
+                                <div style="margin-top: 20px; padding: 15px; background: ${this.getSummaryBackgroundColor(result.recommendation)}; border-radius: 10px; border-left: 4px solid ${this.getSummaryBorderColor(result.recommendation)};">
+                                    <h4 style="margin: 0 0 10px 0; color: #334155; display: flex; align-items: center;">
+                                        <i class="fas fa-shield-alt" style="margin-right: 8px; color: ${this.getSummaryBorderColor(result.recommendation)};"></i>
+                                        Risk Assessment & Recommendation
+                                    </h4>
+                                    <div style="font-size: 0.95rem; line-height: 1.6; color: ${this.getSummaryTextColor(result.recommendation)};">
+                                        ${result.summary}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                } else {
+                    // Fallback for other analysis formats
+                    analysisHTML = `
+                        <div class="analysis-result">
+                            <div class="analysis-header">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Analysis: ${data.team_name || 'Team'} vs ${data.opponent || 'Opponent'}</span>
+                            </div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <span class="recommendation-badge ${this.getRecommendationClass(data.recommendation)}">
+                                    ${(data.recommendation || 'Unknown').toUpperCase()} BET
+                                </span>
+                            </div>
+                            
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-value">${data.confidence || 'N/A'}</div>
+                                    <div class="stat-label">Confidence</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${data.risk_level || 'N/A'}</div>
+                                    <div class="stat-label">Risk Level</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${data.team_record || 'N/A'}</div>
+                                    <div class="stat-label">Team Record</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${data.win_percentage || 'N/A'}</div>
+                                    <div class="stat-label">Win %</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${data.ppg || 'N/A'}</div>
+                                    <div class="stat-label">Points Per Game</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">${data.bayesian_confidence || 'N/A'}</div>
+                                    <div class="stat-label">Bayesian Confidence</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                this.addMessage('bot', analysisHTML, true);
+            }            getRecommendationClass(recommendation) {
+                if (!recommendation) return 'recommendation-risky';
+                const rec = recommendation.toLowerCase();
+                if (rec.includes('safe') || rec.includes('low')) return 'recommendation-safe';
+                if (rec.includes('high') || rec.includes('avoid')) return 'recommendation-high-risk';
+                return 'recommendation-risky';
+            }
+
+            getSummaryBackgroundColor(recommendation) {
+                if (!recommendation) return '#fef3c7';
+                const rec = recommendation.toLowerCase();
+                if (rec.includes('safe') || rec.includes('low')) return '#f0f9ff';
+                if (rec.includes('high') || rec.includes('avoid')) return '#fee2e2';
+                return '#fef3c7';
+            }
+
+            getSummaryBorderColor(recommendation) {
+                if (!recommendation) return '#f59e0b';
+                const rec = recommendation.toLowerCase();
+                if (rec.includes('safe') || rec.includes('low')) return '#0ea5e9';
+                if (rec.includes('high') || rec.includes('avoid')) return '#ef4444';
+                return '#f59e0b';
+            }
+
+            getSummaryTextColor(recommendation) {
+                if (!recommendation) return '#92400e';
+                const rec = recommendation.toLowerCase();
+                if (rec.includes('safe') || rec.includes('low')) return '#0369a1';
+                if (rec.includes('high') || rec.includes('avoid')) return '#dc2626';
+                return '#92400e';
+            }
+
+            showTyping() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'typing-indicator';
+                typingDiv.id = 'typingIndicator';
+                typingDiv.innerHTML = `
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                `;
+                typingDiv.style.display = 'block';
+                this.messagesContainer.appendChild(typingDiv);
+                this.scrollToBottom();
+            }
+
+            hideTyping() {
+                const typingIndicator = document.getElementById('typingIndicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }            async sendMessage(message) {
+                if (this.isProcessing) return;
+
+                const text = message || this.messageInput.value.trim();
+                if (!text) return;
+
+                this.addMessage('user', text);
+                this.messageInput.value = '';
+                this.isProcessing = true;
+                this.sendButton.disabled = true;
+
+                this.showTyping();
+
+                try {
+                    const response = await this.callNBAAPI(text, this.sessionState);
+                    this.hideTyping();
+                    
+                    // Update session state
+                    if (response.session_state) {
+                        this.sessionState = response.session_state;
+                    }
+                    
+                    if (response.type === 'analysis_complete') {
+                        this.addAnalysisMessage(response);
+                    } else {
+                        this.addMessage('bot', response.message);
+                    }
+                } catch (error) {
+                    this.hideTyping();
+                    this.addMessage('bot', 'Sorry, I encountered an error processing your request. Please try again.');
+                    console.error('Error:', error);
+                } finally {
+                    this.isProcessing = false;
+                    this.sendButton.disabled = false;
+                    this.messageInput.focus();
+                }
+            }
+
+            async callNBAAPI(message, sessionState = {}) {
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            session_state: sessionState
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    return data;
+                    
+                } catch (error) {
+                    console.error('API Error:', error);
+                    return {
+                        type: 'message',
+                        message: 'Sorry, I\'m having trouble connecting to the server. Please try again in a moment.'
+                    };
+                }
+            }
+
+            scrollToBottom() {
+                this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+            }
+        }
+
+        // Initialize chatbot
+        const chatbot = new NBAChatbot();
+
+        // Global functions
+        function sendMessage() {
+            chatbot.sendMessage();
+        }
+
+        function sendQuickMessage(message) {
+            chatbot.sendMessage(message);
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Focus input on load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('messageInput').focus();
+        });
+    </script>
+</body>
+</html>
