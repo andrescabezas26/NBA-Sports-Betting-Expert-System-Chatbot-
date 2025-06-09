@@ -6,7 +6,6 @@ from telegram.ext import (
     ApplicationBuilder, CommandHandler, MessageHandler, filters,
     ContextTypes, ConversationHandler
 )
-from nba_chatbot import NBAChatbot
 
 # Configure logging
 logging.basicConfig(
